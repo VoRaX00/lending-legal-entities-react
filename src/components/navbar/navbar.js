@@ -19,19 +19,19 @@ const NavigationBar = () => {
         <nav className="bg-gray-800 text-white p-4">
             <div className="flex justify-center space-x-4">
                 <button
-                    onClick={() => handleNavigate("/submit-application")}
+                    onClick={() => handleNavigate("/")}
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded"
                 >
                     Подать заявку
                 </button>
                 <button
-                    onClick={() => handleNavigate("/make-payment")}
+                    onClick={() => handleNavigate("/payments")}
                     className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded"
                 >
                     Внести платеж
                 </button>
                 <button
-                    onClick={() => handleNavigate("/view-applications")}
+                    onClick={() => handleNavigate("/request")}
                     className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 rounded"
                 >
                     Посмотреть свои заявки
