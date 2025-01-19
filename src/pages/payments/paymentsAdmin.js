@@ -19,6 +19,11 @@ const PaymentsAdminPage = () => {
         }
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("ru-RU");
+    };
+
     const handleEdit = (paymentId, recommendedPayment, delay) => {
         setEditingPayment(paymentId);
         setRecommendedPayment(recommendedPayment);
@@ -109,12 +114,16 @@ const PaymentsAdminPage = () => {
                         </td>
                         <td>
                             {payment.date_payment ? (
-                                <span className="text-success">{payment.date_payment}</span>
+                                <span className="text-success">{formatDate(payment.date_payment)}</span>
                             ) : (
                                 <span className="text-muted">Не оплачено</span>
                             )}
                         </td>
-                        <td>{payment.date_replenishment}</td>
+                        <td>{payment.date_replenishment ? (
+                            formatDate(payment.date_replenishment)
+                        ): (
+                            <></>
+                        )}</td>
                         <td>
                             {!payment.date_replenishment ? (
                                 <>

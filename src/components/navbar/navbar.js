@@ -75,6 +75,12 @@ const NavigationBar = () => {
                         >
                             Посмотреть платежи
                         </button>
+                        <button
+                            onClick={() => handleNavigate("/admin/users")}
+                            className="px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded"
+                        >
+                            Посмотреть всех юр. лиц
+                        </button>
                     </>
                 )}
 

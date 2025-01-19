@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {useAuth} from "../../context/auth";
-import {useNavigate} from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -9,11 +9,11 @@ const LoginPage = () => {
         identifier: "",
     });
     const navigate = useNavigate();
-    const {login} = useAuth()
+    const { login } = useAuth();
 
     const handleSwitch = () => {
         setIsAdmin(!isAdmin);
-        setFormData({ identifier: ""});
+        setFormData({ identifier: "" });
     };
 
     const handleChange = (e) => {
@@ -31,17 +31,17 @@ const LoginPage = () => {
             if (!isAdmin) {
                 const response = await fetch("http://localhost:8080/legal_user/login", {
                     method: "POST",
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        inn: formData.identifier
-                    })
-                })
+                        inn: formData.identifier,
+                    }),
+                });
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.token) {
                         console.log(data.token);
                         login(data.token);
-                        navigate("/")
+                        navigate("/");
                     }
                 } else {
                     console.error("Неверные данные");
@@ -49,11 +49,11 @@ const LoginPage = () => {
             } else {
                 const response = await fetch("http://localhost:8080/admin/login", {
                     method: "POST",
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        email: formData.identifier
-                    })
-                })
+                        email: formData.identifier,
+                    }),
+                });
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.token) {
@@ -64,7 +64,7 @@ const LoginPage = () => {
                 }
             }
         } catch (error) {
-            console.log(`Error with login: ${error}`)
+            console.log(`Error with login: ${error}`);
         }
     };
 
@@ -95,6 +95,9 @@ const LoginPage = () => {
                                         required
                                     />
                                 </div>
+                                <button type="submit" className="btn btn-primary w-100 mb-3">
+                                    Войти
+                                </button>
                             </form>
                             <div className="text-center mt-3">
                                 <button
@@ -102,6 +105,14 @@ const LoginPage = () => {
                                     onClick={handleSwitch}
                                 >
                                     Войти как {isAdmin ? "пользователь" : "администратор"}
+                                </button>
+                            </div>
+                            <div className="text-center mt-3">
+                                <button
+                                    className="btn btn-link"
+                                    onClick={() => navigate("/registration")}
+                                >
+                                    Нет аккаунта? Зарегистрироваться
                                 </button>
                             </div>
                         </div>
