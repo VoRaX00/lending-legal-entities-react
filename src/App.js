@@ -19,7 +19,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 {/*<Route path="/registration" element={<RegistrationPage />}></Route>*/}
                 <Route path="/payments" element={<PaymentsPage />}></Route>
-                {/*<Route path="/credits" element={<CreditsPage></CreditsPage>}></Route>*/}
+                <Route path="/admin/credits" element={<CreditsPage></CreditsPage>}></Route>
                 <Route path="/request" element={<RequestPage />}></Route>
             </Routes>
         </AuthProvider>

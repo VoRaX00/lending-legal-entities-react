@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const RequestsPage = () => {
-    // Пример данных
     const [requests, setRequests] = useState([
         {
             id: 1,
@@ -27,7 +26,6 @@ const RequestsPage = () => {
         },
     ]);
 
-    // Функция для обновления статуса заявки
     const updateStatus = (id, newStatus) => {
         setRequests((prevRequests) =>
             prevRequests.map((request) =>

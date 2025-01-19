@@ -46,6 +46,22 @@ const LoginPage = () => {
                 } else {
                     console.error("Неверные данные");
                 }
+            } else {
+                const response = await fetch("http://localhost:8080/admin/login", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        email: formData.identifier
+                    })
+                })
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.token) {
+                        console.log(data.token);
+                        login(data.token);
+                        navigate("/admin/credits");
+                    }
+                }
             }
         } catch (error) {
             console.log(`Error with login: ${error}`)

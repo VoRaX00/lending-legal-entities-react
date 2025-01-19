@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const PaymentsPage = () => {
-    // Пример данных
     const [payments, setPayments] = useState([
         {
             id: 1,
@@ -22,7 +21,6 @@ const PaymentsPage = () => {
         },
     ]);
 
-    // Обработчик кнопки "Оплатить"
     const handlePay = (paymentId) => {
         setPayments((prevPayments) =>
             prevPayments.map((payment) =>

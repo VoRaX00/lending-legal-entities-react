@@ -46,6 +46,7 @@ const MainPage = () => {
                             key={product.id}
                             product={product}
                             onApply={handleApply}
+                            button={true}
                         />
                     ))}
                 </div>
