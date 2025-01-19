@@ -8,6 +8,7 @@ import CreditsPage from "./pages/credits/credits";
 import RequestPage from "./pages/request/request";
 import {AuthProvider} from "./context/auth";
 import Navbar from "./components/navbar/navbar";
+import AddCreditProductForm from "./pages/credits/addCredits";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
                 {/*<Route path="/registration" element={<RegistrationPage />}></Route>*/}
                 <Route path="/payments" element={<PaymentsPage />}></Route>
                 <Route path="/admin/credits" element={<CreditsPage></CreditsPage>}></Route>
+                <Route path="/admin/addCredits" element={<AddCreditProductForm></AddCreditProductForm>}></Route>
                 <Route path="/request" element={<RequestPage />}></Route>
             </Routes>
         </AuthProvider>
