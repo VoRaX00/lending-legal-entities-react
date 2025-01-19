@@ -3,33 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Cookies from "universal-cookie";
 import {jwtDecode} from "jwt-decode";
 
-/*
-{
-            id: 1,
-            legal_user: { name: "ООО Ромашка", inn: "1234567890" },
-            recommended_payment: 1500.5,
-            delay: 5,
-            date_payment: "", // Платеж не оплачен
-            date_replenishment: "2025-01-25",
-        },
-        {
-            id: 2,
-            legal_user: { name: "ИП Иванов", inn: "0987654321" },
-            recommended_payment: 2000,
-            delay: 0,
-            date_payment: "2025-01-22", // Платеж оплачен
-            date_replenishment: "2025-01-30",
-        },
-        {
-            id: 3,
-            legal_user: { name: "ООО Альфа", inn: "1122334455" },
-            recommended_payment: 3000,
-            delay: 10,
-            date_payment: "", // Платеж не оплачен
-            date_replenishment: "2025-02-01",
-        },
- */
-
 const PaymentsPage = () => {
     const [payments, setPayments] = useState([]);
     const cookies = new Cookies();

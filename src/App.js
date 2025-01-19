@@ -9,6 +9,7 @@ import {AuthProvider} from "./context/auth";
 import Navbar from "./components/navbar/navbar";
 import AddCreditProductForm from "./pages/credits/addCredits";
 import RequestsAllPage from "./pages/request/requestAll";
+import PaymentsAdminPage from "./pages/payments/paymentsAdmin";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 {/*<Route path="/registration" element={<RegistrationPage />}></Route>*/}
                 <Route path="/payments" element={<PaymentsPage />}></Route>
+                <Route path="/admin/payments" element={<PaymentsAdminPage/>}></Route>
                 <Route path="/admin/credits" element={<CreditsPage></CreditsPage>}></Route>
                 <Route path="/admin/addCredits" element={<AddCreditProductForm></AddCreditProductForm>}></Route>
                 <Route path="/admin/requests" element={<RequestsAllPage></RequestsAllPage>}></Route>
