@@ -4,6 +4,7 @@ const CreditProductCard = ({ product, onApply, button }) => {
     return (
         <div className="border rounded p-4 shadow-lg">
             <h3 className="text-lg font-bold">{product.name}</h3>
+            <p>ID: {product.id}</p>
             <p>Тип: {product.type_product}</p>
             <p>Процентная ставка: {product.percent}%</p>
             <p>Срок погашения: {product.repayment_period} мес.</p>

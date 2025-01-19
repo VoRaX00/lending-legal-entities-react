@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 import CreditProductCard from "../../components/credit-product-card/creditProductCard";
 
 const MainPage = () => {
+    const cookies = new Cookies();
     const [creditProducts, setCreditProducts] = useState([]);
+    const [userInn, setUserInn] = useState(""); // Состояние для хранения INN пользователя
 
+    // Функция для получения кредитных продуктов
     const fetchCreditProducts = async () => {
         try {
             const response = await fetch("http://localhost:8080/credit_product/");
@@ -19,11 +24,47 @@ const MainPage = () => {
 
     useEffect(() => {
         fetchCreditProducts();
+
+        // Получаем токен из куки
+        const token = cookies.get("jwt_authorization"); // Извлекаем токен из куки
+
+        if (token) {
+            const decodedToken = jwtDecode(token); // Декодируем токен
+            setUserInn(decodedToken.inn); // Извлекаем INN из полезной нагрузки токена
+        }
     }, []);
 
+    // Функция для отправки заявки
+    const handleApply = async (productId) => {
+        if (!userInn) {
+            alert("Ошибка: не найден INN пользователя.");
+            return;
+        }
 
-    const handleApply = (productId) => {
-        alert(`Заявка на продукт с ID ${productId} успешно подана!`);
+        try {
+            const requestData = {
+                legal_user_inn: userInn, // Данные пользователя
+                credit_product_id: productId, // ID выбранного кредитного продукта
+            };
+
+            const response = await fetch("http://localhost:8080/request/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при создании заявки");
+            }
+
+            // const result = await response.json();
+            alert(`Заявка на продукт с ID ${productId} успешно подана!`);
+        } catch (error) {
+            console.error("Ошибка при отправке заявки:", error);
+            alert("Произошла ошибка при подаче заявки");
+        }
     };
 
     return (
@@ -35,7 +76,7 @@ const MainPage = () => {
                         <CreditProductCard
                             key={product.id}
                             product={product}
-                            onApply={handleApply}
+                            onApply={() => handleApply(product.id)} // Вызовем функцию при нажатии на кнопку
                             button={true}
                         />
                     ))}

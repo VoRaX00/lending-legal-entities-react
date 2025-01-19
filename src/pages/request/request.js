@@ -1,38 +1,39 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {jwtDecode} from "jwt-decode";
+import Cookies from "universal-cookie";
 
 const RequestsPage = () => {
-    const [requests, setRequests] = useState([
-        {
-            id: 1,
-            legal_user: { name: "ООО Ромашка", inn: "1234567890" },
-            credit_product: { name: "Кредит 12%", amount: 100000 },
-            status: "в обработке",
-            administrator: { name: "Иванов Иван" },
-        },
-        {
-            id: 2,
-            legal_user: { name: "ИП Иванов", inn: "0987654321" },
-            credit_product: { name: "Ипотека", amount: 500000 },
-            status: "принято",
-            administrator: { name: "Петров Петр" },
-        },
-        {
-            id: 3,
-            legal_user: { name: "ООО Лилия", inn: "1122334455" },
-            credit_product: { name: "Автокредит", amount: 300000 },
-            status: "отклонить",
-            administrator: { name: "Сидоров Алексей" },
-        },
-    ]);
+    const [reqs, setReqs] = useState([]);
+    const cookies = new Cookies();
+    const [userInn, setUserInn] = useState("");
 
-    const updateStatus = (id, newStatus) => {
-        setRequests((prevRequests) =>
-            prevRequests.map((request) =>
-                request.id === id ? { ...request, status: newStatus } : request
-            )
-        );
+
+    const fetchRequest = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/request/user/${userInn}`);
+            if (!response.ok) {
+                throw new Error("Ошибка при загрузке данных");
+            }
+            const data = await response.json();
+            console.log(data)
+            setReqs(data);
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
     };
+
+    useEffect(() => {
+        if (userInn) {
+            fetchRequest();
+        }
+        const token = cookies.get("jwt_authorization");
+
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            setUserInn(decodedToken.inn);
+        }
+    }, [userInn]);
 
     return (
         <div className="container mt-5">
@@ -41,7 +42,6 @@ const RequestsPage = () => {
                 <thead className="thead-dark">
                 <tr>
                     <th>#</th>
-                    <th>Юридическое лицо</th>
                     <th>ИНН</th>
                     <th>Кредитный продукт</th>
                     <th>Сумма кредита</th>
@@ -50,30 +50,30 @@ const RequestsPage = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {requests.map((request) => (
+                {reqs.map((request) => (
                     <tr key={request.id}>
                         <td>{request.id}</td>
-                        <td>{request.legal_user.name}</td>
-                        <td>{request.legal_user.inn}</td>
-                        <td>{request.credit_product.name}</td>
-                        <td>{request.credit_product.amount.toLocaleString()} ₽</td>
-                        <td>{request.administrator.name}</td>
+                        <td>{request.legal_user_inn}</td>
+                        <td>{request.product_id}</td>
+                        <td>{request.amount.toLocaleString()} ₽</td>
+                        <td>{request.administrator_email}</td>
                         <td>
-                <span
-                    className={`badge ${
-                        request.status === "в обработке"
-                            ? "bg-warning"
-                            : request.status === "принято"
-                                ? "bg-success"
-                                : "bg-danger"
-                    }`}
-                >
-                  {request.status}
-                </span>
+        <span
+            className={`badge ${
+                request.status === "в обработке"
+                    ? "bg-warning"
+                    : request.status === "принята"
+                        ? "bg-success"
+                        : "bg-danger"
+            }`}
+        >
+          {request.status}
+        </span>
                         </td>
                     </tr>
                 ))}
                 </tbody>
+
             </table>
         </div>
     );

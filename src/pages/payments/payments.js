@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Cookies from "universal-cookie";
+import {jwtDecode} from "jwt-decode";
 
-const PaymentsPage = () => {
-    const [payments, setPayments] = useState([
-        {
+/*
+{
             id: 1,
             legal_user: { name: "ООО Ромашка", inn: "1234567890" },
             recommended_payment: 1500.5,
@@ -19,27 +20,83 @@ const PaymentsPage = () => {
             date_payment: "2025-01-22", // Платеж оплачен
             date_replenishment: "2025-01-30",
         },
-    ]);
+        {
+            id: 3,
+            legal_user: { name: "ООО Альфа", inn: "1122334455" },
+            recommended_payment: 3000,
+            delay: 10,
+            date_payment: "", // Платеж не оплачен
+            date_replenishment: "2025-02-01",
+        },
+ */
 
-    const handlePay = (paymentId) => {
-        setPayments((prevPayments) =>
-            prevPayments.map((payment) =>
-                payment.id === paymentId
-                    ? { ...payment, date_payment: new Date().toISOString().split("T")[0] }
-                    : payment
-            )
-        );
-        alert(`Платеж с ID ${paymentId} успешно оплачен!`);
+const PaymentsPage = () => {
+    const [payments, setPayments] = useState([]);
+    const cookies = new Cookies();
+    const [userInn, setUserInn] = useState("");
+
+    const fetchPayments = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/payment/user/${userInn}`);
+            if (!response.ok) {
+                throw new Error("Ошибка при загрузке данных");
+            }
+            const data = await response.json();
+            console.log(data)
+            setPayments(data);
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (userInn) {
+            fetchPayments();
+        }
+        const token = cookies.get("jwt_authorization");
+
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            setUserInn(decodedToken.inn);
+        }
+    }, [userInn]);
+
+
+    const handlePay = async (paymentId, recommended_payment, delay) => {
+        try {
+            const now = new Date().toISOString();
+            const requestBody = {
+                date_replenishment: now,
+                recommended_payment: recommended_payment,
+                delay: delay,
+            };
+
+            const response = await fetch(`http://localhost:8080/payment/${paymentId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при обновлении заявки");
+            }
+
+            // Обновляем список заявок
+            await fetchPayments();
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
     };
 
     return (
         <div className="container mt-5">
-            <h1 className="mb-4">Список платежей</h1>
-            <table className="table table-bordered">
+            <h1 className="mb-4 text-center">Управление платежами</h1>
+            <table className="table table-bordered table-hover">
                 <thead className="thead-dark">
                 <tr>
                     <th>#</th>
-                    <th>Юридическое лицо</th>
                     <th>ИНН</th>
                     <th>Рекомендуемый платеж</th>
                     <th>Просрочка (дни)</th>
@@ -50,26 +107,35 @@ const PaymentsPage = () => {
                 </thead>
                 <tbody>
                 {payments.map((payment) => (
-                    <tr key={payment.id}>
+                    <tr key={payment.id} className={payment.delay > 0 ? "table-danger" : ""}>
                         <td>{payment.id}</td>
-                        <td>{payment.legal_user.name}</td>
-                        <td>{payment.legal_user.inn}</td>
+                        <td>{payment.legal_user_inn}</td>
                         <td>{payment.recommended_payment.toFixed(2)} ₽</td>
-                        <td>{payment.delay}</td>
                         <td>
-                            {payment.date_payment
-                                ? payment.date_payment
-                                : <span className="text-muted">Не оплачено</span>}
+                            {payment.delay > 0 ? (
+                                <span className="text-danger">{payment.delay}</span>
+                            ) : (
+                                <span className="text-success">0</span>
+                            )}
+                        </td>
+                        <td>
+                            {payment.date_payment ? (
+                                <span className="text-success">{payment.date_payment}</span>
+                            ) : (
+                                <span className="text-muted">Не оплачено</span>
+                            )}
                         </td>
                         <td>{payment.date_replenishment}</td>
                         <td>
-                            {!payment.date_payment && (
+                            {!payment.date_replenishment ? (
                                 <button
                                     className="btn btn-primary btn-sm"
-                                    onClick={() => handlePay(payment.id)}
+                                    onClick={() => handlePay(payment.id, payment.recommended_payment, payment.delay)}
                                 >
                                     Оплатить
                                 </button>
+                            ) : (
+                                <span className="text-success">Оплачено</span>
                             )}
                         </td>
                     </tr>
